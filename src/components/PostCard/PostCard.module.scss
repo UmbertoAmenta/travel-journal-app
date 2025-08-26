@@ -1,0 +1,35 @@
+article {
+  background-color: white;
+  border-radius: 10px;
+  padding: 5px;
+
+  .carousel {
+    width: 100%;
+    aspect-ratio: 1/1;
+
+    img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+  }
+  .info {
+    padding: 10px 15px;
+
+    h4 {
+      margin-block: 10px;
+    }
+
+    i {
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+  }
+
+  .date {
+    max-width: 70%;
+    display: flex;
+    justify-content: space-between;
+  }
+}

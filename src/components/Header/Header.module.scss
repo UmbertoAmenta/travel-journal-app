@@ -1,0 +1,46 @@
+@use "../../styles/variables" as v;
+
+header {
+  color: v.$font-color-primary;
+
+  .main_container {
+    max-width: v.$desktop-container;
+    padding: 20px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title_wrapper {
+      width: 60%;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+
+      img {
+        width: 50px;
+      }
+    }
+
+    nav {
+      width: 40%;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      button {
+        cursor: pointer;
+        padding: 10px;
+        background-color: v.$background-color-secondary;
+        color: v.$font-color-primary;
+        border: none;
+        border-radius: 10px;
+      }
+    }
+  }
+}
