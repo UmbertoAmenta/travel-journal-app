@@ -1,6 +1,15 @@
 import { Link } from "react-router-dom";
+
 import style from "./Header.module.scss";
 
+/**
+ * Header
+ * - Mostra logo e titolo
+ * - Contiene la navigazione principale:
+ *   - Link alla homepage
+ *   - Pulsante per aggiungere un nuovo viaggio
+ * - Pensato come componente persistente (layout)
+ */
 export default function Header() {
   return (
     <header>

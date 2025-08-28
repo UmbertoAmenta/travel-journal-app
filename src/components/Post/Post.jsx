@@ -4,14 +4,23 @@ import { useParams } from "react-router-dom";
 import style from "./Post.module.scss";
 
 import Loader from "../Loader/Loader.jsx";
+import CarouselSwiperPost from "../CarouselSwiperPost/CarouselSwiperPost.jsx";
 
+/**
+ * Pagina di dettaglio di un Post (viaggio)
+ * - Recupera i dati del post dall'API in base all'id
+ * - Mostra album immagini, titolo, date, luogo, compagnia e descrizione
+ * - Gestisce loading, errori e post non trovato
+ */
 export default function Post() {
   const { id } = useParams();
 
+  // Stati legati al fetch del singolo Post
   const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Recupero del Post tramite id (Show)
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/posts/${id}`)
       .then((res) => {
@@ -46,14 +55,9 @@ export default function Post() {
   return (
     <section className={style.post}>
       <div className={style.carousel}>
-        <img
-          src={
-            post.album[0] ||
-            "https://thumbs.dreamstime.com/b/vacation-icon-creative-element-design-tourism-icons-collection-pixel-perfect-web-apps-software-print-usage-143072406.jpg"
-          }
-          alt={`"foto" ${post.title}`}
-        />
+        <CarouselSwiperPost album={post.album} />
       </div>
+
       <h2>{post.title}</h2>
       <div className={style.info}>
         <div>
@@ -70,6 +74,7 @@ export default function Post() {
             <p>
               <small>
                 In compagnia di:{" "}
+                {/* Gestione di "," e "e" per una renderizzazione più "naturale" dell'array */}
                 {post.company.length === 1
                   ? post.company[0]
                   : post.company.length === 2

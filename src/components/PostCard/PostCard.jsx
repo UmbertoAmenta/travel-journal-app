@@ -1,11 +1,21 @@
 import { useNavigate } from "react-router-dom";
+
 import style from "./PostCard.module.scss";
 
+/**
+ * Card di anteprima per un singolo Post
+ * - Mostra immagine, titolo, località e date (partenza - ritorno)
+ * - Cliccabile: porta al dettaglio del Post
+ * - Utilizzata all'interno della PostList
+ */
 export default function PostCard({ post }) {
   const navigate = useNavigate();
 
   return (
-    <article onClick={() => navigate(`/travels/${post.id}`)}>
+    <article
+      className={style.card}
+      onClick={() => navigate(`/travels/${post.id}`)}
+    >
       <div className={style.carousel}>
         <img
           src={

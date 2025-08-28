@@ -1,16 +1,23 @@
 import { useState, useEffect } from "react";
 
-import style from "./PostList.module.scss";
-
-// componenti
 import PostCard from "../PostCard/PostCard";
 import Loader from "../Loader/Loader";
 
+import style from "./PostList.module.scss";
+
+/**
+ * Lista di Post
+ * - Recupera tutti i post dall'API (Index)
+ * - Gestisce loading, errori e lista vuota
+ * - Mostra una serie di PostCard
+ */
 export default function PostList() {
+  // Stati legati al fetch dei Post
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Recupero di tutti i Post (Index)
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/posts`)
       .then((res) => {

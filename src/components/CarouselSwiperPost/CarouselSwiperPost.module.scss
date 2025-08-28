@@ -1,0 +1,15 @@
+.mySwiperPost {
+  max-width: 950px;
+
+  .slide {
+    width: 75%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      object-fit: cover;
+      border-radius: 0;
+    }
+  }
+}
