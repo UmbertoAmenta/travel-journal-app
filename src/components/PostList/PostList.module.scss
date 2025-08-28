@@ -1,9 +1,30 @@
 @use "../../styles/variables" as v;
 
 .list {
-  max-width: v.$desktop-container;
+  max-width: var(--container-width);
   margin: 25px auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 50px;
+}
+
+@media (max-width: #{v.$breakpoint-desktop}) {
+  .list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+}
+
+@media (max-width: #{v.$breakpoint-tablet}) {
+  .list {
+    grid-template-columns: 1fr 1fr;
+    // justify-content: center;
+    // max-height: 60vh;
+  }
+}
+
+@media (max-width: #{v.$breakpoint-mobile}) {
+  .list {
+    grid-template-columns: 1fr;
+  }
 }

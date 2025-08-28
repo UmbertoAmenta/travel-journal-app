@@ -4,7 +4,7 @@ header {
   color: v.$font-color-primary;
 
   .main_container {
-    max-width: v.$desktop-container;
+    max-width: var(--container-width);
     padding: 20px;
     margin: auto;
     display: flex;
@@ -18,7 +18,7 @@ header {
       gap: 20px;
 
       img {
-        width: 50px;
+        width: clamp(30px, 50px, 50px);
       }
     }
 
@@ -40,6 +40,24 @@ header {
         color: v.$font-color-primary;
         border: none;
         border-radius: 10px;
+      }
+    }
+  }
+}
+
+@media (max-width: #{v.$breakpoint-mobile}) and (orientation: portrait) {
+  header {
+    .main_container {
+      .title_wrapper {
+        img {
+          width: 30px;
+        }
+        h2 {
+          font-size: medium;
+        }
+      }
+      nav {
+        font-size: small;
       }
     }
   }

@@ -1,14 +1,15 @@
 @use "../../styles/variables" as v;
 
 .post {
-  max-width: v.$desktop-container;
+  max-width: var(--container-width);
   margin: auto;
 
   .carousel {
     display: flex;
     justify-content: center;
-    height: 450px;
+    height: auto;
     margin-block: 25px;
+    aspect-ratio: 16/9;
 
     img {
       width: 100%;

@@ -1,10 +1,33 @@
 @use "./variables" as v;
 
 :root {
+  // #{interpolazione} per iniettare il valore di una variabile scss in un contesto testuale
+  --container-width: #{v.$desktop-container};
+}
+
+body {
   background-color: v.$background-color-primary;
 }
 
 img {
   max-width: 100%;
   height: auto;
+}
+
+@media (max-width: #{v.$breakpoint-desktop}) {
+  :root {
+    --container-width: 800px;
+  }
+}
+
+@media (max-width: #{v.$breakpoint-tablet}) {
+  :root {
+    --container-width: 600px;
+  }
+}
+
+@media (max-width: #{v.$breakpoint-mobile}) {
+  :root {
+    --container-width: 400px;
+  }
 }
