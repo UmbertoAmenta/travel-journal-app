@@ -1,5 +1,9 @@
 @use "../../styles/variables" as v;
 
+.filter_and_sort {
+  display: flex;
+}
+
 .list {
   max-width: var(--container-width);
   margin: 25px auto;
@@ -18,8 +22,6 @@
 @media (max-width: #{v.$breakpoint-tablet}) {
   .list {
     grid-template-columns: 1fr 1fr;
-    // justify-content: center;
-    // max-height: 60vh;
   }
 }
 

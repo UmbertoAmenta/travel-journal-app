@@ -17,6 +17,26 @@ export default function PostList() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Array senza duplicati (new Set crea un oggetto Set senza duplicati) ordinato alfabeticamente
+  const uniquePlaces = [...new Set(posts.map((p) => p.locality))].sort();
+
+  // Stati legati al filtraggio dei Post
+  const [postsByPlace, setPostsByPlace] = useState("");
+  const [tripType, setTripType] = useState("all");
+
+  // Logiche di filtro
+  const filteredLocality = (post) =>
+    postsByPlace === "" || post.locality === postsByPlace;
+
+  const filteredTripType = (post) =>
+    tripType === "all" ||
+    (tripType === "group" && post.company.length > 0) ||
+    (tripType === "solo" && post.company.length === 0);
+
+  const filteredPosts = posts.filter(
+    (p) => filteredLocality(p) && filteredTripType(p)
+  );
+
   // Recupero di tutti i Post (Index)
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/posts`)
@@ -50,10 +70,52 @@ export default function PostList() {
   }
 
   return (
-    <section className={style.list}>
-      {posts.map((p) => {
-        return <PostCard key={p.id} post={p} />;
-      })}
-    </section>
+    <>
+      <section className={style.filter_and_sort}>
+        <div className="filter">
+          <details>
+            <summary>Filtra</summary>
+            <div>
+              {/* select per località (solo quelle utilizzate) */}
+              <select
+                name=""
+                value={postsByPlace}
+                onChange={(e) => setPostsByPlace(e.target.value)}
+              >
+                <option value="">Tutte le località</option>
+                {uniquePlaces.map((place) => (
+                  <option key={place} value={place}>
+                    {place}
+                  </option>
+                ))}
+              </select>
+
+              {/* select per viaggio in solitaria/gruppo */}
+              <select
+                value={tripType}
+                onChange={(e) => setTripType(e.target.value)}
+              >
+                <option value="all">Tutti i viaggi</option>
+                <option value="solo">Solitaria</option>
+                <option value="group">Gruppo</option>
+              </select>
+            </div>
+          </details>
+        </div>
+
+        <div className="sort">
+          <details>
+            <summary>Ordina</summary>
+            <div></div>
+          </details>
+        </div>
+      </section>
+
+      <section className={style.list}>
+        {filteredPosts.map((p) => {
+          return <PostCard key={p.id} post={p} />;
+        })}
+      </section>
+    </>
   );
 }
