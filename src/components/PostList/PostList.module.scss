@@ -1,9 +1,5 @@
 @use "../../styles/variables" as v;
 
-.filter_and_sort {
-  display: flex;
-}
-
 .list {
   max-width: var(--container-width);
   margin: 25px auto;

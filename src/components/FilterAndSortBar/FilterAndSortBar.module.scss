@@ -1,0 +1,63 @@
+@use "../../styles/variables" as v;
+
+.filter_and_sort {
+  max-width: var(--container-width);
+  margin: 10px auto 45px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  gap: 20px;
+
+  details {
+    summary {
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      justify-content: center;
+      background-color: v.$font-color-secondary;
+      padding-inline: 10px;
+      cursor: pointer;
+      border-bottom: 1px dashed black;
+    }
+
+    div {
+      padding: 5px;
+      border-radius: 0 0 10px 10px;
+      background-color: white;
+      display: flex;
+      gap: 5px;
+
+      .arrow {
+        display: inline-block;
+        width: 5px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+@media (max-width: #{v.$breakpoint-tablet}) {
+  .filter_and_sort {
+    margin-bottom: 30px;
+
+    details {
+      div {
+        button,
+        select {
+          font-size: 10px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: #{v.$breakpoint-mobile}) {
+  .filter_and_sort {
+    margin-bottom: 10px;
+
+    details {
+      div {
+        flex-direction: column;
+      }
+    }
+  }
+}

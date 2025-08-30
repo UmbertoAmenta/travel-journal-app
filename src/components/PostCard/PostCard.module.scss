@@ -1,3 +1,5 @@
+@use "../../styles/variables" as v;
+
 article.card {
   background-color: white;
   border-radius: 10px;
@@ -44,5 +46,21 @@ article.card {
   .date {
     display: flex;
     justify-content: space-between;
+  }
+}
+
+@media (max-width: #{v.$breakpoint-tablet}) {
+  article.card {
+    &:hover {
+      scale: 1.1;
+    }
+  }
+}
+
+@media (max-width: #{v.$breakpoint-mobile}) {
+  article.card {
+    &:hover {
+      scale: none;
+    }
   }
 }
