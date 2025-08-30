@@ -41,9 +41,64 @@ export default function PostList() {
 
   if (isLoading) return <Loader />;
 
-  if (error) return <p>Errore: {error}</p>;
+  if (error) {
+    return (
+      <section className={style.emptylist}>
+        <h2>🚨 Si è verificato un errore</h2>
+        <p>{error.message || "Impossibile recuperare i dati dal server."}</p>
 
-  if (posts.length === 0) return <p>Nessun post disponibile</p>;
+        <div className={style.errorDetails}>
+          <p>🔧 Prova a:</p>
+          <ul>
+            <li>🔄 Ricaricare la pagina</li>
+            <li>📶 Controllare la connessione</li>
+            <li>📩 Contattare il supporto se il problema persiste</li>
+          </ul>
+        </div>
+
+        <p className={style.callToAction}>
+          Anche gli imprevisti fanno parte del viaggio 🌧️→🌈
+        </p>
+      </section>
+    );
+  }
+
+  // Gestione database vuoto e filtri eccessivi
+  if (filteredAndSortedPosts.length === 0) {
+    return posts.length === 0 ? (
+      <section className={style.emptylist}>
+        <h2>🎫 Nessun viaggio disponibile</h2>
+        <p>
+          Il diario è ancora vuoto. È il momento perfetto per iniziare a
+          scrivere la tua storia!
+        </p>
+        <button className={style.addDataBtn}>
+          Aggiungi il tuo primo viaggio
+        </button>
+      </section>
+    ) : (
+      <section className={style.emptylist}>
+        <h2>🔍 Nessun viaggio trovato</h2>
+        <p>
+          I filtri selezionati non corrispondono a nessun viaggio registrato.
+        </p>{" "}
+        <div className={style.filtersSummary}>
+          {filters.postsByPlace && (
+            <span>
+              📍 <strong>Località:</strong> {filters.postsByPlace}
+            </span>
+          )}
+          <span>
+            🧑‍🤝‍🧑 <strong>Viaggio:</strong>{" "}
+            {filters.tripType === "solo" ? "in solitaria" : "in compagnia"}
+          </span>{" "}
+        </div>
+        <p className={style.callToAction}>
+          Un buon motivo per preparare i bagagli 🧳→🎫→🌴
+        </p>
+      </section>
+    );
+  }
 
   return (
     <>

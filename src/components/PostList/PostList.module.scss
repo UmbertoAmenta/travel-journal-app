@@ -1,5 +1,64 @@
 @use "../../styles/variables" as v;
 
+.emptylist {
+  max-width: var(--container-width);
+  margin: 25px auto;
+  background-color: white;
+  border: 2px dashed v.$font-color-secondary;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  color: black;
+
+  h2 {
+    color: coral;
+  }
+
+  .filtersSummary {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    color: black;
+  }
+
+  .callToAction {
+    font-style: italic;
+    color: #2ecc71;
+  }
+
+  .addDataBtn {
+    border-radius: 20px;
+    cursor: pointer;
+    padding: 10px;
+    background-color: v.$background-color-primary;
+    color: v.$font-color-primary;
+    border: none;
+    border-radius: 10px;
+
+    &:hover {
+      scale: 1.2;
+      transition: 0.3s ease;
+    }
+  }
+
+  .errorDetails {
+    background-color: v.$background-color-primary;
+    padding: 15px;
+    border-radius: 10px;
+    color: v.$font-color-primary;
+  }
+
+  .errorDetails ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .errorDetails li {
+    margin-block: 5px;
+  }
+}
+
 .list {
   max-width: var(--container-width);
   margin: 25px auto;
