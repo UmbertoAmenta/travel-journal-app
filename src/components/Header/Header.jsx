@@ -24,9 +24,11 @@ export default function Header() {
 
         <nav>
           <Link to="/">I tuoi Viaggi</Link>
-          <button type="button" title="Nuovi Ricordi">
-            +
-          </button>
+          <Link to="/admin">
+            <button type="button" title="Nuovi Ricordi">
+              +
+            </button>
+          </Link>
         </nav>
       </div>
     </header>

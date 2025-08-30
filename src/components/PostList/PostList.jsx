@@ -7,6 +7,7 @@ import FilterAndSortBar from "../FilterAndSortBar/FilterAndSortBar";
 import { useFilterAndSort } from "../../hooks/useFilterAndSort";
 
 import style from "./PostList.module.scss";
+import { Link } from "react-router-dom";
 
 /**
  * Lista di Post
@@ -72,9 +73,11 @@ export default function PostList() {
           Il diario è ancora vuoto. È il momento perfetto per iniziare a
           scrivere la tua storia!
         </p>
-        <button className={style.addDataBtn}>
-          Aggiungi il tuo primo viaggio
-        </button>
+        <Link to="/admin">
+          <button className={style.addDataBtn}>
+            Aggiungi il tuo primo viaggio
+          </button>
+        </Link>
       </section>
     ) : (
       <section className={style.emptylist}>
