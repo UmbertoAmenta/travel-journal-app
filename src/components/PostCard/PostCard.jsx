@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 
+import { getDuration } from "../../utils/date";
+
 import style from "./PostCard.module.scss";
 
 /**
@@ -13,6 +15,9 @@ import style from "./PostCard.module.scss";
  */
 export default function PostCard({ post }) {
   const navigate = useNavigate();
+
+  // Durata viaggio
+  const duration = getDuration(post.initialDate, post.finalDate);
 
   return (
     <article
@@ -31,18 +36,24 @@ export default function PostCard({ post }) {
 
       <div className={style.info}>
         <h4>{post.title}</h4>
-        <i>{post.locality}</i>{" "}
-        <FontAwesomeIcon
-          icon={post.company.length > 0 ? faUsers : faUser}
-          title={
-            post.company.length > 0
-              ? "Viaggio di gruppo"
-              : "Viaggio in solitaria"
-          }
-        />
+        <div>
+          <i>{post.locality}</i>{" "}
+          <FontAwesomeIcon
+            icon={post.company.length > 0 ? faUsers : faUser}
+            title={
+              post.company.length > 0
+                ? "Viaggio di gruppo"
+                : "Viaggio in solitaria"
+            }
+          />
+        </div>
+
         <div className={style.date}>
           <small>dal {post.initialDate}</small>
           <small>al {post.finalDate}</small>
+          <span>
+            {duration !== 1 ? `${duration} giorni` : `${duration} giorno`}
+          </span>
         </div>
       </div>
     </article>

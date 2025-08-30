@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import PostCard from "../PostCard/PostCard";
 import Loader from "../Loader/Loader";
 
+import { parseDate } from "../../utils/date";
+
 import style from "./PostList.module.scss";
 
 /**
@@ -24,6 +26,10 @@ export default function PostList() {
   const [postsByPlace, setPostsByPlace] = useState("");
   const [tripType, setTripType] = useState("all");
 
+  // Stati legati all'ordinamento dei Post
+  const [sortBy, setSortBy] = useState("date");
+  const [sortDirection, setSortDirection] = useState("desc");
+
   // Logiche di filtro
   const filteredLocality = (post) =>
     postsByPlace === "" || post.locality === postsByPlace;
@@ -36,6 +42,51 @@ export default function PostList() {
   const filteredPosts = posts.filter(
     (p) => filteredLocality(p) && filteredTripType(p)
   );
+
+  // Logiche di ordinamento
+  const sortPosts = (posts, sortField, sortDirection) => {
+    const sorted = [...posts];
+
+    sorted.sort((a, b) => {
+      let result = 0;
+
+      switch (sortField) {
+        case "date":
+          result = parseDate(a.initialDate) - parseDate(b.initialDate);
+          break;
+
+        case "locality":
+          result = a.locality.localeCompare(b.locality);
+          break;
+
+        case "duration":
+          const durationA = parseDate(a.finalDate) - parseDate(a.initialDate);
+          const durationB = parseDate(b.finalDate) - parseDate(b.initialDate);
+          result = durationA - durationB;
+          break;
+
+        default:
+          result = 0;
+      }
+
+      return result;
+    });
+
+    if (sortDirection === "desc") {
+      sorted.reverse();
+    }
+
+    return sorted;
+  };
+
+  const toggleSort = (field) => {
+    if (sortBy === field) {
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortBy(field);
+      setSortDirection("asc");
+    }
+  };
 
   // Recupero di tutti i Post (Index)
   useEffect(() => {
@@ -106,13 +157,39 @@ export default function PostList() {
         <div className="sort">
           <details>
             <summary>Ordina</summary>
-            <div></div>
+            <div>
+              {/* cronologico (default, dal più recente) */}
+              <button onClick={() => toggleSort("date")}>
+                📅 Data{" "}
+                {sortBy === "date" ? (sortDirection === "asc" ? "↑" : "↓") : ""}
+              </button>
+
+              {/* alfabetico per località */}
+              <button onClick={() => toggleSort("locality")}>
+                🔤 Località{" "}
+                {sortBy === "locality"
+                  ? sortDirection === "asc"
+                    ? "↑"
+                    : "↓"
+                  : ""}
+              </button>
+
+              {/* lunghezza viaggio */}
+              <button onClick={() => toggleSort("duration")}>
+                ⏱️ Durata{" "}
+                {sortBy === "duration"
+                  ? sortDirection === "asc"
+                    ? "↑"
+                    : "↓"
+                  : ""}
+              </button>
+            </div>
           </details>
         </div>
       </section>
 
       <section className={style.list}>
-        {filteredPosts.map((p) => {
+        {sortPosts(filteredPosts, sortBy, sortDirection).map((p) => {
           return <PostCard key={p.id} post={p} />;
         })}
       </section>

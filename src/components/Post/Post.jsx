@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
+
+import { getDuration } from "../../utils/date.js";
+
 import style from "./Post.module.scss";
 
 import Loader from "../Loader/Loader.jsx";
@@ -19,6 +24,9 @@ export default function Post() {
   const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Durata viaggio
+  const duration = post ? getDuration(post.initialDate, post.finalDate) : null;
 
   // Recupero del Post tramite id (Show)
   useEffect(() => {
@@ -64,16 +72,25 @@ export default function Post() {
           <h3>
             <i>{post.locality}</i>
           </h3>
-          <div>
-            <span>{post.initialDate}</span>
-            <span>{post.finalDate}</span>
+          <div className={style.dates}>
+            <span>Partenza: {post.initialDate}</span>
+            <span>Ritorno: {post.finalDate}</span>
+            {duration !== null && (
+              <span>
+                {duration !== 1
+                  ? `Durata: ${duration} giorni`
+                  : `Durata: ${duration} giorno`}
+              </span>
+            )}
           </div>
           {post.company.length === 0 ? (
-            <p>Viaggio in solitaria</p>
+            <p>
+              <FontAwesomeIcon icon={faUser} /> Viaggio in solitaria
+            </p>
           ) : (
             <p>
               <small>
-                In compagnia di:{" "}
+                <FontAwesomeIcon icon={faUsers} /> In compagnia di:{" "}
                 {/* Gestione di "," e "e" per una renderizzazione più "naturale" dell'array */}
                 {post.company.length === 1
                   ? post.company[0]
