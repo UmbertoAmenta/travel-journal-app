@@ -73,7 +73,7 @@ export default function PostList() {
           Il diario è ancora vuoto. È il momento perfetto per iniziare a
           scrivere la tua storia!
         </p>
-        <Link to="/admin">
+        <Link to="/travels/new">
           <button className={style.addDataBtn}>
             Aggiungi il tuo primo viaggio
           </button>

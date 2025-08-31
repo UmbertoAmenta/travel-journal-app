@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
@@ -19,6 +19,7 @@ import CarouselSwiperPost from "../CarouselSwiperPost/CarouselSwiperPost.jsx";
  */
 export default function Post() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   // Stati legati al fetch del singolo Post
   const [post, setPost] = useState(null);
@@ -48,6 +49,27 @@ export default function Post() {
       });
   }, [id]);
 
+  // Eliminazione post (richiesta conferma)
+  const handleDelete = async () => {
+    if (!confirm("Vuoi davvero eliminare questo post?")) return;
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/posts/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Errore durante l'eliminazione");
+      alert("Post eliminato con successo!");
+      navigate("/travels");
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // Modifica del post
+  const handleEdit = () => {
+    navigate(`/travels/${id}/edit`);
+  };
+
   if (isLoading) {
     return <Loader />;
   }
@@ -65,8 +87,17 @@ export default function Post() {
       <div className={style.carousel}>
         <CarouselSwiperPost album={post.album} />
       </div>
-
-      <h2>{post.title}</h2>
+      <div className={style.heading}>
+        <h2>{post.title}</h2>
+        <span className={style.handlerBtns}>
+          <button type="button" onClick={handleEdit}>
+            Modifica
+          </button>
+          <button type="button" onClick={handleDelete}>
+            Elimina
+          </button>
+        </span>
+      </div>
       <div className={style.info}>
         <div>
           <h3>

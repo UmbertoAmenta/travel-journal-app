@@ -1,32 +1,73 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import style from "./NewPostForm.module.scss";
+import style from "./PostForm.module.scss";
+import { useNavigate } from "react-router-dom";
 
-export default function NewPostForm() {
+export default function PostForm({
+  mode = "create",
+  prevData = null,
+  postId = null,
+}) {
+  const navigate = useNavigate();
+
   const titleRef = useRef();
   const localityRef = useRef();
   const initialDateRef = useRef();
   const finalDateRef = useRef();
   const descriptionRef = useRef();
 
-  const [company, setCompany] = useState([]);
-  const [albumUrls, setAlbumUrls] = useState([]);
+  const [company, setCompany] = useState(prevData?.company || []);
+  const [albumUrls, setAlbumUrls] = useState(prevData?.album || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Recupera i dati iniziali in modalità Edit
+  useEffect(() => {
+    if (prevData) {
+      if (titleRef.current) titleRef.current.value = prevData.title || "";
+      if (localityRef.current)
+        localityRef.current.value = prevData.locality || "";
+      if (descriptionRef.current)
+        descriptionRef.current.value = prevData.description || "";
+      if (initialDateRef.current) {
+        const [d, m, y] = prevData.initialDate.split("/");
+        initialDateRef.current.value = `${y}-${m.padStart(2, "0")}-${d.padStart(
+          2,
+          "0"
+        )}`;
+      }
+      if (finalDateRef.current) {
+        const [d, m, y] = prevData.finalDate.split("/");
+        finalDateRef.current.value = `${y}-${m.padStart(2, "0")}-${d.padStart(
+          2,
+          "0"
+        )}`;
+      }
+      setCompany(prevData.company || []);
+      setAlbumUrls(prevData.album || []);
+    }
+  }, [prevData]);
+
+  // Cambio formattazione data YYYY-MM-DD -> D/MM/YYYY
+  const formatDate = (isoDate) => {
+    const d = new Date(isoDate);
+    const day = d.getDate().toString().padStart(2, "0");
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   // Gestione dei dati del form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Cambio formattazione data YYYY-MM-DD -> D/MM/YYYY
-    const formatDate = (isoDate) => {
-      const d = new Date(isoDate);
-      const day = d.getDate().toString().padStart(2, "0");
-      const month = (d.getMonth() + 1).toString().padStart(2, "0");
-      const year = d.getFullYear();
-      return `${day}/${month}/${year}`;
-    };
+    // Controllo presenza di almeno 1 immagine
+    if (albumUrls.length === 0) {
+      alert("Devi aggiungere almeno un URL per l'album!");
+      return;
+    }
 
-    const newPost = {
+    // Dati iniziali in fase Edit
+    const postData = {
       title: titleRef.current.value,
       locality: localityRef.current.value,
       company,
@@ -37,19 +78,25 @@ export default function NewPostForm() {
     };
 
     // Validazione date
-    if (new Date(newPost.finalDate) < new Date(newPost.initialDate)) {
+    if (new Date(postData.finalDate) < new Date(postData.initialDate)) {
       alert("Se sei tornato prima di partire, non sei mai partito!");
       return;
     }
 
     setIsSubmitting(true);
 
+    // Invio al backend POST / PATCH
     try {
-      // Invio al backend
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/posts`, {
-        method: "POST",
+      const url =
+        mode === "edit"
+          ? `${import.meta.env.VITE_API_URL}/posts/${postId}`
+          : `${import.meta.env.VITE_API_URL}/posts`;
+      const method = mode === "edit" ? "PATCH" : "POST";
+
+      const response = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPost),
+        body: JSON.stringify(postData),
       });
 
       if (!response.ok) throw new Error("Errore durante il salvataggio");
@@ -66,7 +113,13 @@ export default function NewPostForm() {
       descriptionRef.current.value = "";
       setAlbumUrls([]);
 
-      alert("Post aggiunto con successo!");
+      alert(
+        mode === "edit"
+          ? "Post aggiornato con successo!"
+          : "Post aggiunto con successo"
+      );
+
+      navigate("/travels");
     } catch (error) {
       console.error(error);
       alert("Si è verificato un errore durante il salvataggio.");
@@ -81,14 +134,20 @@ export default function NewPostForm() {
   };
 
   return (
-    <section className={style.newPostForm}>
+    <section className={style.postForm}>
       <h2>Compila il form</h2>
       <small>*: campi obbligatori</small>
 
       <form onSubmit={handleSubmit}>
         <label htmlFor="title">
           Dai un nome alla tua avventura*{" "}
-          <input id="title" type="text" ref={titleRef} required />
+          <input
+            id="title"
+            type="text"
+            ref={titleRef}
+            required
+            defaultValue={prevData?.title || ""}
+          />
         </label>
 
         <label htmlFor="locality">
@@ -175,7 +234,11 @@ export default function NewPostForm() {
         </div>
 
         <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Invio in corso..." : "Aggiungi al Diario"}
+          {isSubmitting
+            ? "Invio in corso..."
+            : mode === "edit"
+            ? "Salva modifiche"
+            : "Aggiungi al Diario"}
         </button>
       </form>
     </section>
