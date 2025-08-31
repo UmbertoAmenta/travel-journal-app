@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import DefaultLayout from "../src/layouts/DefaultLayout.jsx";
-import PostList from "./components/Postlist/PostList.jsx";
+import PostList from "./components/PostList/PostList.jsx";
 import Post from "./components/Post/Post.jsx";
 import NewPostPage from "./components/NewPostPage/NewPostPage.jsx";
 import EditPostPage from "./components/EditPostPage/EditPostPage.jsx";
