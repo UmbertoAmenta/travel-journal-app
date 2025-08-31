@@ -39,7 +39,7 @@ export default function Post() {
         return res.json();
       })
       .then(({ data }) => {
-        setPost(data);
+        setPost(data[0]);
       })
       .catch((error) => {
         setError(error.message);

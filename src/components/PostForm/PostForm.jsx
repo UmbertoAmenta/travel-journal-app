@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import style from "./PostForm.module.scss";
-import { useNavigate } from "react-router-dom";
 
 export default function PostForm({
   mode = "create",
@@ -10,40 +10,50 @@ export default function PostForm({
 }) {
   const navigate = useNavigate();
 
-  const titleRef = useRef();
-  const localityRef = useRef();
-  const initialDateRef = useRef();
-  const finalDateRef = useRef();
-  const descriptionRef = useRef();
-
-  const [company, setCompany] = useState(prevData?.company || []);
-  const [albumUrls, setAlbumUrls] = useState(prevData?.album || []);
+  const [title, setTitle] = useState("");
+  const [locality, setLocality] = useState("");
+  const [initialDate, setInitialDate] = useState("");
+  const [finalDate, setFinalDate] = useState("");
+  const [description, setDescription] = useState("");
+  const [company, setCompany] = useState([]);
+  const [albumUrls, setAlbumUrls] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Recupera i dati iniziali in modalità Edit
   useEffect(() => {
+    console.log("prevData ricevuto:", prevData);
     if (prevData) {
-      if (titleRef.current) titleRef.current.value = prevData.title || "";
-      if (localityRef.current)
-        localityRef.current.value = prevData.locality || "";
-      if (descriptionRef.current)
-        descriptionRef.current.value = prevData.description || "";
-      if (initialDateRef.current) {
-        const [d, m, y] = prevData.initialDate.split("/");
-        initialDateRef.current.value = `${y}-${m.padStart(2, "0")}-${d.padStart(
+      // Se prevData è un array, prendi il primo elemento
+      const postData = Array.isArray(prevData) ? prevData[0] : prevData;
+
+      console.log("Impostazione dati iniziali...");
+      setTitle(postData.title || "");
+      setLocality(postData.locality || "");
+      setDescription(postData.description || "");
+      setCompany(postData.company || []);
+      setAlbumUrls(postData.album || []);
+
+      if (postData.initialDate) {
+        console.log("Data iniziale:", postData.initialDate);
+        const [d, m, y] = postData.initialDate.split("/");
+        const formattedDate = `${y}-${m.padStart(2, "0")}-${d.padStart(
           2,
           "0"
         )}`;
+        console.log("Data formattata:", formattedDate);
+        setInitialDate(formattedDate);
       }
-      if (finalDateRef.current) {
-        const [d, m, y] = prevData.finalDate.split("/");
-        finalDateRef.current.value = `${y}-${m.padStart(2, "0")}-${d.padStart(
+
+      if (postData.finalDate) {
+        console.log("Data finale:", postData.finalDate);
+        const [d, m, y] = postData.finalDate.split("/");
+        const formattedDate = `${y}-${m.padStart(2, "0")}-${d.padStart(
           2,
           "0"
         )}`;
+        console.log("Data formattata:", formattedDate);
+        setFinalDate(formattedDate);
       }
-      setCompany(prevData.company || []);
-      setAlbumUrls(prevData.album || []);
     }
   }, [prevData]);
 
@@ -68,12 +78,12 @@ export default function PostForm({
 
     // Dati iniziali in fase Edit
     const postData = {
-      title: titleRef.current.value,
-      locality: localityRef.current.value,
+      title,
+      locality,
       company,
-      initialDate: formatDate(initialDateRef.current.value),
-      finalDate: formatDate(finalDateRef.current.value),
-      description: descriptionRef.current.value,
+      initialDate: formatDate(initialDate),
+      finalDate: formatDate(finalDate),
+      description,
       album: albumUrls,
     };
 
@@ -104,20 +114,20 @@ export default function PostForm({
       const data = await response.json();
       console.log("Post salvato:", data);
 
-      // Reset campi del form
-      titleRef.current.value = "";
-      localityRef.current.value = "";
-      setCompany([]);
-      initialDateRef.current.value = "";
-      finalDateRef.current.value = "";
-      descriptionRef.current.value = "";
-      setAlbumUrls([]);
-
       alert(
         mode === "edit"
           ? "Post aggiornato con successo!"
           : "Post aggiunto con successo"
       );
+
+      // Reset stati
+      setTitle("");
+      setLocality("");
+      setInitialDate("");
+      setFinalDate("");
+      setDescription("");
+      setCompany([]);
+      setAlbumUrls([]);
 
       navigate("/travels");
     } catch (error) {
@@ -128,9 +138,19 @@ export default function PostForm({
     }
   };
 
-  // Rimozione compagni di viaggio
+  // Rimozione compagno di viaggio/immagine
   const handleRemoveItem = (index, setter) => {
     setter((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Aggiunta compagno di viaggio
+  const handleAddCompany = (name) => {
+    if (name.trim()) setCompany([...company, name.trim()]);
+  };
+
+  // Aggiunta immagine all'album
+  const handleAddAlbumUrl = (url) => {
+    if (url.trim()) setAlbumUrls([...albumUrls, url.trim()]);
   };
 
   return (
@@ -144,15 +164,21 @@ export default function PostForm({
           <input
             id="title"
             type="text"
-            ref={titleRef}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             required
-            defaultValue={prevData?.title || ""}
           />
         </label>
 
         <label htmlFor="locality">
           In che località?*
-          <input id="locality" type="text" ref={localityRef} required />
+          <input
+            id="locality"
+            type="text"
+            value={locality}
+            onChange={(e) => setLocality(e.target.value)}
+            required
+          />
         </label>
 
         <div className={style.wrapper}>
@@ -164,7 +190,7 @@ export default function PostForm({
               onKeyDown={(e) => {
                 if (e.key === "Enter" && e.currentTarget.value.trim()) {
                   e.preventDefault();
-                  setCompany([...company, e.currentTarget.value.trim()]);
+                  handleAddCompany(e.currentTarget.value);
                   e.currentTarget.value = "";
                 }
               }}
@@ -189,18 +215,35 @@ export default function PostForm({
         <div className={style.dateWrapper}>
           <label htmlFor="initialDate">
             Data di partenza...*
-            <input id="initialDate" type="date" ref={initialDateRef} required />
+            <input
+              id="initialDate"
+              type="date"
+              value={initialDate}
+              onChange={(e) => setInitialDate(e.target.value)}
+              required
+            />
           </label>
 
           <label htmlFor="finalDate">
             ...e data di ritorno*
-            <input id="finalDate" type="date" ref={finalDateRef} required />
+            <input
+              id="finalDate"
+              type="date"
+              value={finalDate}
+              onChange={(e) => setFinalDate(e.target.value)}
+              required
+            />
           </label>
         </div>
 
         <label htmlFor="description">
           Descrivi la tua esperienza*
-          <textarea id="description" ref={descriptionRef} required></textarea>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          ></textarea>
         </label>
 
         <div className={style.wrapper}>
@@ -212,7 +255,7 @@ export default function PostForm({
               onKeyDown={(e) => {
                 if (e.key === "Enter" && e.currentTarget.value.trim()) {
                   e.preventDefault();
-                  setAlbumUrls([...albumUrls, e.currentTarget.value.trim()]);
+                  handleAddAlbumUrl(e.currentTarget.value);
                   e.currentTarget.value = "";
                 }
               }}
