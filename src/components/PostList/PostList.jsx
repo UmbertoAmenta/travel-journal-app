@@ -28,6 +28,10 @@ export default function PostList() {
     useFilterAndSort(posts);
   // Recupero di tutti i Post (Index)
   useEffect(() => {
+    const url = import.meta.env.VITE_API_URL + "/posts";
+    console.log(import.meta.env.VITE_API_URL);
+    console.log("Fetching from:", url);
+
     fetch(`${import.meta.env.VITE_API_URL}/posts`)
       .then((res) => {
         if (!res.ok) {
